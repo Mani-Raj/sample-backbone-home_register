@@ -1,0 +1,269 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/assets/style.css">
+    <script src="/assets/js/jquery-3.4.1.js"></script>
+    <script src="/assets/js/underscore.js"></script>
+    <script src="/assets/js/backbone-min.js"></script>
+    <!-- <script src="/assets/js/myscript.js"></script> -->
+
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
+    <link type="text/css" rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
+
+</head>
+
+<body>
+    <div id="fulldiv" style="margin-bottom: 20px;">
+        <div class="container" id="divhome" style="margin-top:30px; text-align:center;">
+            <a href="#register"> <button type="submit" id="btnreghome" class="btn btn-success">Register</button> </a>
+            <a href="#login"> <button type="submit" id="btnloghome" class="btn btn-success">Login</button> </a>
+            <a href=""> <button type="submit" id="homebtn" class="btn btn-success">Home</button> </a>
+            <a href="#show"> <button type="get" id="homebtn" class="btn btn-success">Show</button> </div> </a>
+        <div>
+            <hr>
+            <div id="jsGrid"> </div>
+
+            <div id="divlogin" class="container" style="text-align: left;">
+                <label class="">Name:</label><input class="form-control" type="text" placeholder="User Name"
+                    id="logname"> <br>
+                <label>password:</label><input class="form-control" type="password" placeholder="password"
+                    id="logpassword"> <br>
+                <a href="#log"> <button type="submit" class="btn btn-primary" id="btnloglogin">Login</button> </a>
+                <a href=""> <button type="submit" class="btn btn-success" id="btnhomelogin">Home</button> </a>
+            </div>
+
+            <div id="divregister" class="container" style="text-align: left;">
+                <label class="">Name:</label><input id="name" class="form-control" type="text" placeholder="User Name"
+                    id="name"> <br>
+                <label>email: </label><input class="form-control" type="email" placeholder="email" id="email"> <br>
+                <label>phone: </label><input class="form-control" type="tel" placeholder="phone number" id="phone"> <br>
+                <label>password:</label><input class="form-control" type="password" placeholder="password"
+                    id="password"> <br>
+
+                <a href="/#register"><button type="submit" id="btnregregister" class="btn btn-primary">Register</button>
+
+                    <a href=""> <button type="submit" id="btnhomregister" class="btn btn-success">Home</button> </a>
+            </div>
+        </div>
+        <script>
+            var model = Backbone.Model.extend({
+                url: '/submit',
+                defaults: {
+                    name: null,
+                    email: null,
+                    phone: null,
+                    password: null
+                }
+            });
+
+            var modelobj = new model();
+
+            var modelshow = Backbone.Model.extend({
+                url: "/show"
+            });
+
+
+            var home = $("#divhome");
+            var login = $("#divlogin");
+            var register = $("#divregister");
+            var showdiv = $("#jsGrid");
+
+            $("#btnregregister").click(function () {
+                modelobj.set({
+                    name: $("#name").val(),
+                    email: $("#email").val(),
+                    phone: $("#phone").val(),
+                    password: $("#password").val(),
+                });
+
+                // obj = {
+                //     name: $("#name").val(),
+                //     email: $("#email").val(),
+                //     phone: $("#phone").val(),
+                //     password: $("#password").val(),
+                // }
+
+                var data = modelobj.toJSON();
+                alert(JSON.stringify(data));
+                //modelobj.save(obj,{ success: function(modelobj,res){ alert(res + '--->') }, error: function(modelobj, err) { alert(err + "--->er")}, wait: true })
+                modelobj.save(null, {
+                    success: function (model, response) {
+                        alert("data submitted successfully..!")
+                        $("#divregister").load(location.href + " #divregister")
+                    },
+                    error: function (model, response) {
+                        alert("something wrong..!");
+                        $("#divregister").load(location.href + " #divregister");
+                    }
+                })
+
+
+                //     async function db(){
+                //         await new Promise(function(resolve, reject){
+                //             setTimeout(()=> resolve() , 300) })
+                //             .then(function(resolve){ console.log("you done "+ resolve)}).then(function(){ console.log("Registreation successfull") })
+                //             .then(function(){ $("#divregister").load(location.href + " #divregister") })
+                //             .catch(function(){ alert("error")})
+                // }
+
+
+            });
+
+            var homeview = Backbone.View.extend({
+                initialize: function () {
+                    this.render();
+                    this.router = router;
+
+                },
+                render: function () {
+                    login.hide();
+                    register.hide();
+                    showdiv.hide();
+                }
+            });
+
+            var loginview = Backbone.View.extend({
+                initialize: function () {
+                    this.render();
+                },
+                render: function () {
+                    register.hide();
+                    login.show();
+                    showdiv.hide();
+                }
+            });
+
+            var registerview = Backbone.View.extend({
+                model: modelobj,
+                events: {
+                    "click #btnregregister": "registerAction"
+                },
+
+                registerAction: function () {
+                    alert("you clicked register under events");
+                    // this.model.set({
+                    //     name: $("#name").val(),
+                    //     email: $("#email").val(),
+                    //     phone: $("#phone").val(),
+                    //     password: $("#password").val(),
+                    // });
+
+                    // var data = this.model.toJSON();            
+
+                    // var string = JSON.stringify(data);
+                    //     return $.ajax({
+                    //         url:"/submit",
+                    //         contentType: 'application/json',
+                    //         method: "POST",
+                    //         data: string})
+                    //         .done(function(msg){ 
+                    //             alert("Registreation successfull..! Our system  " + msg);
+                    //             // var subview = new submitview();
+                    //         })
+                    //         .fail(function(){alert("ajax req res failed...!")});
+                },
+                initialize: function () {
+                    this.render();
+                },
+
+                render: function () {
+                    login.hide();
+                    register.show();
+                    showdiv.hide();
+                }
+
+            });
+
+
+            var routeclass = Backbone.Router.extend({
+                model: modelobj,
+                routes: {
+                    "": "homepage",
+                    "register": "registerpage",
+                    "login": "loginpage",
+                    "login(/:name)": "homepage",
+                    "register/submit": "submitpage",
+                    "show": "show"
+                },
+                homepage: function () {
+                    var home = new homeview();
+
+                },
+                registerpage: function () {
+                    var register = new registerview();
+
+                },
+                loginpage: function () {
+                    var login = new loginview();
+                },
+                submitpage: function () {
+                    var register = new registerview();
+                    // console.log("below model from route")
+                    // console.log(this.model);
+                    // console.log('registration done.. notifi from route');
+                },
+                show: function () {
+                    var modelshowobj = new modelshow();
+
+                    var showView = Backbone.View.extend({
+                        showgrid: showgrid,
+                        el: "#jsGrid",
+                        initialize: function () {
+                            this.render();
+                        },
+                        render: function () {
+                            this.el = this.showgrid;
+                            showdiv.show();
+                            login.hide();
+                            register.hide();
+                        }
+                    });
+                    modelshowobj.fetch({
+                        success: function (response, xhr) {
+                            $("#jsGrid").jsGrid({ data: xhr })
+                            return xhr;
+                        },
+                        error: function (errorResponse) {
+                            console.log(console.error(Response))
+                        }
+                    });
+ 
+                    var clients = [];
+                    var showgrid = $("#jsGrid").jsGrid({
+                        width: "100%",
+                        height: "300px",
+
+                        inserting: true,
+                        editing: true,
+                        sorting: true,
+                        paging: true,
+
+                        data: clients,
+
+                        fields: [
+                            { name: "name", type: "text", width: 150, validate: "required" },
+                            { name: "id", type: "number", width: 50, editable: true, editoptions: { readonly: "readonly" }},
+                            { name: "email", type: "email", width: 200 },
+                            { name: "password", type: "text"  },
+                            { name: "phone", type: "tel",sorting: false,   editable: true},
+                            { type: "control" }
+                        ]
+                    });
+
+                    var showViewobj = new showView();
+                }
+            });
+            var router = new routeclass();
+            Backbone.history.start();
+        </script>
+</body>
+
+</html>

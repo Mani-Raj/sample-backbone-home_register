@@ -1,0 +1,98 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+
+        <script src="js/jquery-3.4.1.js"></script>
+        <script src="js/underscore.js"></script>
+        <script src="js/backbone-min.js"></script>
+
+        <link rel = "stylesheet" href="stylee.css">
+
+    </head>
+    <script type="text/html" id="myform">
+        <form class="form-inline" style="text-align: center;">
+                <div class="container">
+                <label class ="">Name:</label><input class="form-control" type="text" placeholder="User Name" id="name"> <br>
+                <label>password:</label><input class="form-control" type ="password" placeholder="password" id="password">  <br>
+    
+                <button type="submit" class="btn btn-success" id="reg"><a href="viewtemplate.html" >Register<a></button>
+                <button type="submit" class="btn btn-primary" id="log">Login</button>
+                </div>
+                <p><%= name%></p>
+        </form>
+    
+    </script>
+    <script type="text/html" id="afterlogin">
+        welcome <%= name %>..!
+    
+    </script>
+    <body>
+       <div id="mydiv"></div>
+    </body>
+    <script>
+        var formmodel = Backbone.Model.extend({
+            initialize:function(){
+                console.log("model has been initialized..!");
+            }
+        });
+        
+        var formmodelObj = new formmodel();
+
+        formmodelObj.set({
+            name:"raj",
+            email:"raj@emdsys.com",
+            phone:"123",
+            password:"12345"
+        });
+
+    
+
+        var formView = Backbone.View.extend({
+            template: _.template($("#myform").html()),
+            el: "#mydiv",
+            model: formmodelObj,
+            events:{
+                "click button#log":"onclick"
+            },
+            onclick:function(){
+                nameval = $("#name").val();
+                passval = $("#password").val();
+                if(this.model.get('name') == nameval && this.model.get('password')== passval){
+                    alert("you logged in successfully...!");
+                    this.render();
+                }else{
+                    alert("username or password incorrect..!")
+                }
+            },
+            initialize: function(){
+                this.render();
+            },
+            render: function(){
+                this.$el.html(this.template(this.model.toJSON()));
+                console.log("rendering the template");
+                console.log(this.model.toJSON());
+                console.log(this.model.get("email"));
+            }
+        }); 
+
+        var formviewObject = new formView();
+
+        var routerclass = Backbone.Router.extend({
+       
+            routes: {
+                "register":"openRegPage"
+            },
+            openRegPage: function(){
+               
+            }
+        });
+        var routerobj = new routerclass();
+        Backbone.history.start();
+
+    </script>
+</html>

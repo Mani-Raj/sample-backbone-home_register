@@ -1,0 +1,10 @@
+label{
+    margin-right: 20px;
+}
+input{
+    margin-bottom: 10px;
+}
+a, a:hover,a:visited, a:active{
+    text-decoration: none;
+    color:white;
+}
